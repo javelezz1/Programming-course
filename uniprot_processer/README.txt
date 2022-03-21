@@ -8,22 +8,20 @@ Every record in the file starts with the field ID, and ends with the pair of cha
 character identification as the first 2 characters. Sequence field SQ, is followed by aminoacid sequence with no code,
 until the record ends.
 
-SPECIFICATIONS
+SPECIFICATIONS - UNIPROT_BROWSER_2.0.PY
 
 This is a query tool to query protein records, given as a filter the name of fields and values using the and logic.
-For field/value separator, use the sequence VALUE.in.FIELD [ .and . [VALUE.in.FIELD]][ .and . [VALUE.in.FIELD]]...
-Use every record matching the conditional sentence to apply for the commands that could appear as the TOOL
-USAGE section explains.
+For field/value separator, use the sequence VALUE.in.FIELD separated by .and. concatenators [ VALUE.in.FIELD.and.VALUE.in.FIELD ...]
+All the queries have to match on the same record to keep that record.
 
 TOOL USAGE
 
 COMMAND.
-● The command line tool name is uprotview. A user use the command line to write the name of the
-command, like % > python3 uprotview.py filter fieldlist or commands
+● A user use the command line to write the name of the command, like % > python3 uprotview.py filter fieldlist or commands
 ARGUMENTS
 ● First argument is the filename of the uniprot data.
 ● Second argument is the filter to apply to the data (the QUERY).
-○ VALUE_.in.FIELD [ .and . [VALUE.in.FIELD]][ .and . [VALUE.in.FIELD]]...
+○ VALUE.in.FIELD.and.VALUE.in.FIELD
 ● Following arguments can be FIELDNAMES to show, or COMMANDS to execute, all of this separated by
 spaces.
 ○ [field1 field2 command1 command2 . . .]
@@ -449,3 +447,142 @@ VNFCYSSRNYVSRPFKQWLEQLKLKYKENLKLKEFFSEESSVTKEQIVDEVMTRIINEEDLEKLDLSECDIYMLGPNNYM
 RFVKQELVKLGVEPNKVQSEFFGPYIP
 
 For simplicity reasons, In this sample, only 4 fasta records are shown.
+
+
+DATABASE COMMAND
+
+DBINSERT
+
+When DBINSERT is present, no typical results will be printed on terminal, instead you will print a
+series of tables ready to be used to create a database with the help of other tools like SQLITE.
+
+SPECIFICATIONS.
+Add the argument DBINSERT db=sqlite_database_name.
+For this first part, only the extraction of the tables data will be shown.
+
+tom@Toms-iMac uniprotquery % python3 uniprot.py $HOME/tempodata/dat_uniprot.dat
+002R_IIV3.in.ID DBINSERT db=$HOME/tempodata/sndaprot.db
+
+--TABLE PROTEIN--
+['002R_IIV3', 'Q197F8;', 458, 'ORFNames=IIV3-002R;', 'Invertebrate iridescent virus 3 (IIV-3)
+(Mosquito iridescent virus).', 'Viruses; Varidnaviria; Bamfordvirae; Nucleocytoviricota;
+Megaviricetes;Pimascovirales; Iridoviridae; Betairidovirinae; Chloriridovirus.',
+'NCBI_TaxID=345201;', 'Reference proteome.', '4: Predicted;', 'SEQUENCE 458 AA; 53921 MW;
+E46E5C85D7ACA139
+CRC64;MASNTVSAQGGSNRPVRDFSNIQDVAQFLLFDPIWNEQPGSIVPWKMNREQALAERYPELQTSEPSEDYSGPVESLELLPLEIKLDIMQYLSWEQ
+ISWCKHPWLWTRWYKDNVVRVSAITFEDFQREYAFPEKIQEIHFTDTRAEEIKAILETTPNVTRLVIRRIDDMNYNTHGDLGLDDLEFLTHLMVEDACGFT
+DFWAPSLTHLTIKNLDMHPRWFGPVMDGIKSMQSTLKYLYIFETYGVNKPFVQWCTDNIETFYCTNSYRYENVPRPIYVWVLFQEDEWHGYRVEDNKFHRR
+YMYSTILHKRDTDWVENNPLKTPAQVEMYKFLLRISQLNRDGTGYESDSDPENEHFDDESFSSGEEDSSDEDDPTWAPDSDDSDWETETEEEPSVAARILE
+KGKLTITNLMKSLGFKPKPKKIQSIDRYFCSLDSNYNSEDEDFEYDSDSEDDDSDSEDDC']
+
+--TABLE DATES--
+['002R_IIV3', '16-JUN-2009', ' integrated into UniProtKB/Swiss-Prot.']
+['002R_IIV3', '11-JUL-2006', ' sequence version 1.']
+['002R_IIV3', '02-JUN-2021', ' entry version 28.']
+
+--TABLE NAMES--
+['002R_IIV3', 'RecName: Full=Uncharacterized protein 002R;']
+
+--TABLE CODES--
+['002R_IIV3', 'EMBL; DQ643392; ABF82032.1; -; Genomic_DNA.']
+['002R_IIV3', 'RefSeq; YP_654574.1; NC_008187.1.']
+['002R_IIV3', 'SMR; Q197F8; -.']
+['002R_IIV3', 'GeneID; 4156251; -.']
+['002R_IIV3', 'KEGG; vg:4156251; -.']
+['002R_IIV3', 'Proteomes; UP000001358; Genome.']
+
+--TABLE FEATURES--
+['002R_IIV3', 'CHAIN', '1..458', 'note="Uncharacterized protein 002R"id="PRO_0000377938"']
+['002R_IIV3', 'REGION', '339..397', 'note="Disordered"evidence="ECO:0000256|SAM:MobiDB-lite"']
+['002R_IIV3', 'REGION', '434..458', 'note="Disordered"evidence="ECO:0000256|SAM:MobiDB-lite"']
+['002R_IIV3', 'COMPBIAS', '348..387', 'note="Acidic
+residues"evidence="ECO:0000256|SAM:MobiDB-lite"']
+['002R_IIV3', 'COMPBIAS', '435..458', 'note="Acidic
+residues"evidence="ECO:0000256|SAM:MobiDB-lite"']
+
+--TABLE COMMENTS--
+['002R_IIV3', '---------------------------------------------------------------------------']
+['002R_IIV3', 'Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms']
+['002R_IIV3', 'Distributed under the Creative Commons Attribution (CC BY 4.0) License']
+['002R_IIV3', '---------------------------------------------------------------------------']
+
+--TABLE FASTA--
+['002R_IIV3', '>id=002R_IIV3;accesion=Q197F8;name=Invertebrate iridescent virus 3 (IIV-3)
+(Mosquito iridescent virus).',
+'MASNTVSAQGGSNRPVRDFSNIQDVAQFLLFDPIWNEQPGSIVPWKMNREQALAERYPELQTSEPSEDYSGPVESLELLP\nLEIKLDIMQYLSWEQISW
+CKHPWLWTRWYKDNVVRVSAITFEDFQREYAFPEKIQEIHFTDTRAEEIKAILETTPNVTRL\nVIRRIDDMNYNTHGDLGLDDLEFLTHLMVEDACGFTD
+FWAPSLTHLTIKNLDMHPRWFGPVMDGIKSMQSTLKYLYIFET\nYGVNKPFVQWCTDNIETFYCTNSYRYENVPRPIYVWVLFQEDEWHGYRVEDNKFHR
+RYMYSTILHKRDTDWVENNPLKTP\nAQVEMYKFLLRISQLNRDGTGYESDSDPENEHFDDESFSSGEEDSSDEDDPTWAPDSDDSDWETETEEEPSVAAR
+ILEKG\nKLTITNLMKSLGFKPKPKKIQSIDRYFCSLDSNYNSEDEDFEYDSDSEDDDSDSEDDC\n']
+
+
+The schema of the database is as follows:
+
+CREATE TABLE IF NOT EXISTS "Comments" (
+  "id_protein" TEXT NOT NULL,
+  "comment" TEXT NOT NULL,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Dates" (
+  "id_protein" TEXT NOT NULL,
+  "date" TEXT NOT NULL,
+  "event" TEXT NOT NULL,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Features" (
+  "id_protein" TEXT NOT NULL,
+  "type" TEXT NOT NULL,
+  "loc" TEXT,
+  "description" INTEGER,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Names" (
+  "id_protein" TEXT NOT NULL,
+  "name" INTEGER NOT NULL,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Fasta" (
+  "id_protein" TEXT NOT NULL,
+  "header" TEXT NOT NULL,
+  "sequence" TEXT NOT NULL,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Codes" (
+  "id_protein" TEXT NOT NULL,
+  "code" TEXT NOT NULL,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Proteins" (
+  "idprotein" TEXT NOT NULL,
+  "accession" TEXT NOT NULL,
+  "names" TEXT NOT NULL,
+  "taxonomy" TEXT NOT NULL,
+  "taxonomyid" TEXT NOT NULL,
+  "sequence" TEXT NOT NULL,
+  "AA_number" INTEGER NOT NULL DEFAULT 0,
+  "keywords" TEXT,
+  "predicted" TEXT,
+  "orfnames" TEXT,
+PRIMARY KEY("idprotein")
+
+
+FIELDS OF ORIGIN FOR EACH TYPE OF DATA
+
+The information for the fields are coded as follows:
+
+'id' : 'ID',
+'orfnames' : 'GN',
+'predicted' : 'PE',
+'keywords' : 'KW',
+'accession' : 'AC',
+'name' : 'OS',
+'taxa' : 'OC',
+'taxaid' : 'OX',
+'sequence' : 'SQ',
+'dates' : 'DT',
+'names' : 'DE',
+'codes' : 'DR',
+'features' : 'FT',
+'comments' : 'CC',
+'fasta' : 'FA'
+
