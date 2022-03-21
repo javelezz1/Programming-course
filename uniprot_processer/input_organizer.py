@@ -31,4 +31,6 @@ def comandos()->list:
             inputs_list.append("TAXONS")
         elif x == "FASTA":
             inputs_list.append("FASTA")
+        elif x == "DBINSERT":
+            inputs_list.append("DBINSERT")
     return inputs_list

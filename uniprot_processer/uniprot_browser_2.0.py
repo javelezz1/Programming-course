@@ -1,10 +1,11 @@
-
 # Made by Jhon Alexander Velez Zapata
+# Module main
 
 from fasta_generator import fasta
 from input_organizer import comandos, inputs
 from basic_commands import verificar_registro, field_printer, llamada_comandos
 from taxon_command import taxon_count, taxon_id
+from db_extractor import db_extractor
 import sys
 
 
@@ -23,25 +24,28 @@ def procesar_proteinas():
         elif line.startswith("//"):
             if verificar_registro(record,query):
                 count += 1
-                if "FASTA" in inputs_list:
-                    fasta(record)
-                elif "TAXONS" in inputs_list:
-                    taxons = taxon_id(record)
-                    for taxon in taxons:
-                        lista_taxones.append(taxon)
-                if len(sys.argv) < 4 or "SHOWALL" in inputs_list:
-                    for f in record:
-                        print(f)
+                if "DBINSERT" in inputs_list:
+                    db_extractor(record)
                 else:
-                    if not "FASTA" in inputs_list:
-                        field_printer(record, inputs_list)
+                    if "FASTA" in inputs_list:
+                        fasta(record)
+                    elif "TAXONS" in inputs_list:
+                        taxons = taxon_id(record)
+                        for taxon in taxons:
+                            lista_taxones.append(taxon)
+                    if len(sys.argv) < 4 or "SHOWALL" in inputs_list:
+                        for f in record:
+                            print(f)
+                    else:
+                        if not "FASTA" in inputs_list:
+                            field_printer(record, inputs_list)
             countall += 1
         else:
             record.append(line[:-1])
-    if "TAXONS" in inputs_list:
+    if "TAXONS" in inputs_list and not "DBINSERT" in inputs_list:
         taxon_count(lista_taxones)
     handle.close()
-    if not "FASTA" in inputs_list:
+    if not "FASTA" in inputs_list and not "DBINSERT" in inputs_list:
         llamada_comandos(count, countall, inputs_list)
 
 
