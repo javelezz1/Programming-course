@@ -452,6 +452,61 @@ For simplicity reasons, In this sample, only 4 fasta records are shown.
 DATABASE COMMAND
 
 DBINSERT
+The purpose is to export data from Swiss-Uniprot text database to a SQL database.
+
+Use the argument DBINSERT db=sqlite_database_name to export the filtered
+records to the following schema.
+The schema of the database is as follow:
+
+
+
+CREATE TABLE IF NOT EXISTS "Comments" (
+  "id_protein" TEXT NOT NULL,
+  "comment" TEXT NOT NULL,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Dates" (
+  "id_protein" TEXT NOT NULL,
+  "date" TEXT NOT NULL,
+  "event" TEXT NOT NULL,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Features" (
+  "id_protein" TEXT NOT NULL,
+  "type" TEXT NOT NULL,
+  "loc" TEXT,
+  "description" INTEGER,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Names" (
+  "id_protein" TEXT NOT NULL,
+  "name" INTEGER NOT NULL,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Fasta" (
+  "id_protein" TEXT NOT NULL,
+  "header" TEXT NOT NULL,
+  "sequence" TEXT NOT NULL,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Codes" (
+  "id_protein" TEXT NOT NULL,
+  "code" TEXT NOT NULL,
+FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "Proteins" (
+  "idprotein" TEXT NOT NULL,
+  "accession" TEXT NOT NULL,
+  "names" TEXT NOT NULL,
+  "taxonomy" TEXT NOT NULL,
+  "taxonomyid" TEXT NOT NULL,
+  "sequence" TEXT NOT NULL,
+  "AA_number" INTEGER NOT NULL DEFAULT 0,
+  "keywords" TEXT,
+  "predicted" TEXT,
+  "orfnames" TEXT,
+PRIMARY KEY("idprotein")
+
 
 When DBINSERT is present, no typical results will be printed on terminal, instead you will print a
 series of tables ready to be used to create a database with the help of other tools like SQLITE.
@@ -518,52 +573,7 @@ ILEKG\nKLTITNLMKSLGFKPKPKKIQSIDRYFCSLDSNYNSEDEDFEYDSDSEDDDSDSEDDC\n']
 
 The schema of the database is as follows:
 
-CREATE TABLE IF NOT EXISTS "Comments" (
-  "id_protein" TEXT NOT NULL,
-  "comment" TEXT NOT NULL,
-FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS "Dates" (
-  "id_protein" TEXT NOT NULL,
-  "date" TEXT NOT NULL,
-  "event" TEXT NOT NULL,
-FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS "Features" (
-  "id_protein" TEXT NOT NULL,
-  "type" TEXT NOT NULL,
-  "loc" TEXT,
-  "description" INTEGER,
-FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS "Names" (
-  "id_protein" TEXT NOT NULL,
-  "name" INTEGER NOT NULL,
-FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS "Fasta" (
-  "id_protein" TEXT NOT NULL,
-  "header" TEXT NOT NULL,
-  "sequence" TEXT NOT NULL,
-FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS "Codes" (
-  "id_protein" TEXT NOT NULL,
-  "code" TEXT NOT NULL,
-FOREIGN KEY("id_protein") REFERENCES "Proteins"("idprotein") ON DELETE CASCADE
-);
-CREATE TABLE IF NOT EXISTS "Proteins" (
-  "idprotein" TEXT NOT NULL,
-  "accession" TEXT NOT NULL,
-  "names" TEXT NOT NULL,
-  "taxonomy" TEXT NOT NULL,
-  "taxonomyid" TEXT NOT NULL,
-  "sequence" TEXT NOT NULL,
-  "AA_number" INTEGER NOT NULL DEFAULT 0,
-  "keywords" TEXT,
-  "predicted" TEXT,
-  "orfnames" TEXT,
-PRIMARY KEY("idprotein")
+
 
 
 FIELDS OF ORIGIN FOR EACH TYPE OF DATA
