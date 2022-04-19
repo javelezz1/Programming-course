@@ -33,4 +33,6 @@ def comandos()->list:
             inputs_list.append("FASTA")
         elif x == "DBINSERT":
             inputs_list.append("DBINSERT")
+        elif x == "VERBOSE":
+            inputs_list.append("VERBOSE")
     return inputs_list

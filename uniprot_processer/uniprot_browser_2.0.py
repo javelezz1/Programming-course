@@ -5,7 +5,7 @@ from fasta_generator import fasta
 from input_organizer import comandos, inputs
 from basic_commands import verificar_registro, field_printer, llamada_comandos
 from taxon_command import taxon_count, taxon_id
-from db_extractor import db_extractor
+from db_extractor import sqlite3_options, dbinsert_verification
 import sys
 
 
@@ -17,6 +17,8 @@ def procesar_proteinas():
     countall:int = 0
     record=[]
     lista_taxones = []
+    total = 0
+    parcial = 0
     for line in handle:
         if line.startswith("ID"):
             record.clear()
@@ -25,7 +27,12 @@ def procesar_proteinas():
             if verificar_registro(record,query):
                 count += 1
                 if "DBINSERT" in inputs_list:
-                    db_extractor(record)
+                    sqlite3_options(record)
+                    total += 1
+                    parcial += 1
+                    if parcial == 10:
+                        parcial = 0
+                        print(total, " records inserted in db")
                 else:
                     if "FASTA" in inputs_list:
                         fasta(record)
@@ -47,6 +54,9 @@ def procesar_proteinas():
     handle.close()
     if not "FASTA" in inputs_list and not "DBINSERT" in inputs_list:
         llamada_comandos(count, countall, inputs_list)
+    if "DBINSERT" in inputs_list:
+        boolean, db_name = dbinsert_verification()
+        print(total, " records inserted in total in ", db_name)
 
 
 procesar_proteinas()

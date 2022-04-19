@@ -1,5 +1,7 @@
 # module 5
 import sys, os
+from sqlite3_connections import insertion
+from input_organizer import comandos
 
 def dbinsert_verification():
     for i in range(len(sys.argv)):
@@ -11,15 +13,13 @@ def dbinsert_verification():
                 print("Database not given right")
                 exit()
             elif not os.path.isfile(sys.argv[i+1][3:]):
-                print("The database given does not exist")
+                print("The given database does not exist")
                 exit()
             else:
                 db_name = sys.argv[i+1][3:]
-                return True
-
+                return True, db_name
 
 def table_dates(record):
-    print("\n--TABLE DATES--")
     ID = ""
     DT = []
     for line in record:
@@ -28,24 +28,32 @@ def table_dates(record):
     for line in record:
         if line.startswith("DT"):
             DT.append(line[5:])
+    TABLEDATES = []
     for i in range(0, len(DT)):
-        print([ID , DT[i].split(",")[0], DT[i].split(",")[1]])
+        TABLEDATES.append([ID , DT[i].split(",")[0], DT[i].split(",")[1]])
+    return TABLEDATES
 
 def table_names(record):
-    print("\n--TABLE NAMES--")
     ID = ""
     DE = ""
     for line in record:
         if line.startswith("ID"):
-            ID = (line[5:].split(" ")[0])
+            ID = (line[5:].split(" ")[0])   
+    elemento = ""
+    contador = 0
+    TABLENAMES = []
     for line in record:
-        if line.startswith("DE"):
-            DE = (line[5:])
-            break
-    print([ID , DE])
-    
+        if not line[5:].startswith("  ") and line.startswith("DE"):
+            if not contador == 0:
+                TABLENAMES.append([ID, elemento])
+            elemento = line[5:] 
+            contador = 1           
+        elif line[5:].startswith(" ") and line.startswith("DE"):
+            elemento += line[8:]
+    TABLENAMES.append([ID, elemento])
+    return TABLENAMES
+ 
 def table_codes(record):
-    print("\n--TABLE CODES--")
     ID = ""
     DR = []
     for line in record:
@@ -54,16 +62,17 @@ def table_codes(record):
     for line in record:
         if line.startswith("DR"):
             DR.append(line[5:])
+    TABLECODES = []
     for i in range(0, len(DR)):
-        print([ID , DR[i]])
+        TABLECODES.append([ID , DR[i]])
+    return TABLECODES
 
 def table_features(record):
-    print("\n--TABLE FEATURES--")
     ID = ""
     for line in record:
         if line.startswith("ID"):
             ID = (line[5:].split(" ")[0])
-            
+    TABLEFEATURES = []        
     elemento = []
     contador = 0
     for line in record:
@@ -74,7 +83,7 @@ def table_features(record):
                 info = ""
                 for i in range(1, len(elemento)):
                     info += elemento[i][15:]
-                print([ID, tipo, loc, info])
+                TABLEFEATURES.append([ID, tipo, loc, info])
             elemento.clear()
             contador = 1
             elemento= [line[5:]]
@@ -85,44 +94,48 @@ def table_features(record):
     info = ""
     for i in range(1, len(elemento)):
         info += elemento[i][15:]
-    print([ID, tipo, loc, info])
+    TABLEFEATURES.append([ID, tipo, loc, info])
+    return TABLEFEATURES
        
 def table_comments(record):
-    print("\n--TABLE COMMENTS--")
     ID = ""
     for line in record:
         if line.startswith("ID"):
             ID = (line[5:].split(" ")[0])
-            
+    TABLECOMMENTS = []
     elemento = ""
     contador = 0
+    linea_final_contador = 0
     for line in record:
         if line[5:].startswith("-!-") and line.startswith("CC"):
             if not contador == 0:
-                print([ID, elemento])
+                TABLECOMMENTS.append([ID, elemento])
             elemento = line[8:] 
             contador = 1           
         elif line[5:].startswith(" ") and line.startswith("CC"):
             elemento += line[8:]
         if line[5:].startswith("------") and line.startswith("CC"):
-            print([ID, line[5:]])
+            if linea_final_contador == 0:
+                TABLECOMMENTS.append([ID, elemento])
+                linea_final_contador = 1
+            TABLECOMMENTS.append([ID, line[5:]])
         if line[5:].startswith("Copy") or line[5:].startswith("Dist"):
-            print([ID, line[5:]])
+            TABLECOMMENTS.append([ID, line[5:]])
+    return TABLECOMMENTS
 
 from fasta_generator import get_header, get_sequence
 
 def table_fasta(record):
-    print("\n--TABLE FASTA--")
     ID = ""
     for line in record:
         if line.startswith("ID"):
             ID = (line[5:].split(" ")[0])
     header = get_header(record)
     sequence = get_sequence(record)
-    print([ID, header, sequence])
+    TABLEFASTA = [ID, header, sequence]
+    return TABLEFASTA
 
 def table_protein(record):
-    print("\n--TABLE PROTEIN--")
     ID = ""
     for line in record:
         if line.startswith("ID"):
@@ -164,19 +177,47 @@ def table_protein(record):
     for line in record:
         if line.startswith("GN"):
             GN += line[5:]
-    print([ID, AC, AA, GN, OS, OC, OX, KW, PE, SQ])
+    TABLEPROTEIN = []
+    TABLEPROTEIN.append([ID, AC, AA, GN, OS, OC, OX, KW, PE, SQ])
+    return TABLEPROTEIN
 
-def db_printer(record):
-    table_protein(record)
-    table_dates(record)
-    table_names(record)
-    table_codes(record)
-    table_features(record)
-    table_comments(record)
-    table_fasta(record)
-
-
-def db_extractor(record):
-    if dbinsert_verification():
-        db_printer(record)
-               
+def db_printer(TABLECOMMENTS, TABLEDATES, TABLEFEATURES, TABLENAMES, TABLEFASTA, TABLECODES, TABLEPROTEIN):
+    print("\n--TABLE PROTEIN--")
+    print(TABLEPROTEIN)
+    print("\n--TABLE DATES--")
+    for i in TABLEDATES:
+        print(i)
+    print("\n--TABLE NAMES--")
+    for i in TABLENAMES:
+        print(i)
+    print("\n--TABLE CODES--")
+    for i in TABLECODES:
+        print(i)
+    print("\n--TABLE FEATURES--")
+    for i in TABLEFEATURES:
+        print(i)
+    print("\n--TABLE COMMENTS--")
+    for i in TABLECOMMENTS:
+        print(i)
+    print("\n--TABLE FASTA--")
+    print(TABLEFASTA)
+       
+def sqlite3_options(record):
+    id_protein=""
+    for line in record:
+        if line.startswith("ID"):
+            id_protein = (line[5:].split(" ")[0])
+    boolean, db_name = dbinsert_verification()
+    if boolean == True:
+        TABLEPROTEIN=table_protein(record)
+        TABLEDATES=table_dates(record)
+        TABLENAMES=table_names(record)
+        TABLECODES=table_codes(record)
+        TABLEFEATURES=table_features(record)
+        TABLECOMMENTS=table_comments(record)
+        TABLEFASTA=table_fasta(record)
+        inputs_list=comandos()
+        insertion(TABLECOMMENTS, TABLEDATES, TABLEFEATURES, TABLENAMES, TABLEFASTA, TABLECODES, TABLEPROTEIN, db_name, id_protein)
+        if "VERBOSE" in inputs_list:
+            db_printer(TABLECOMMENTS, TABLEDATES, TABLEFEATURES, TABLENAMES, TABLEFASTA, TABLECODES, TABLEPROTEIN)
+         
