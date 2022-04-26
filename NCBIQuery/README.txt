@@ -3,6 +3,8 @@ NCBIQuery
 This remote NCBI extractor and exporter will query GenBank data online in database “Nucleotide”,
 extract specific gene collection from a set of organisms, and save the queried data to tab separated values file (.tsv).
 
+For it to work, it has to have the pandas and biopython libraries installed.
+
 The following arguments are required in command line:
 
 query: is the query to send to NCBI.
